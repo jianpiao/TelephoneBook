@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>广理工电话本·广理小助手</title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-title {
+				background-color: #18B4ED;
+				color: #FFFFFF;
+				font-size: 2ex;
+			}
+			
+			.mui-bar-nav {
+				background-color: #18B4ED;
+			}
+			
+			.search-box {
+				padding: 8px 10px 0px 10px;
+				background-color: #EBECED;
+				position: fixed;
+				width: 100%;
+				z-index: 10;
+			}
+			
+			.mui-table-view {
+				margin-top: 50px;
+			}
+			
+			.li-name {
+				list-style: none;
+			}
+			
+			.ul-item {
+				padding-left: 0px;
+				display: inline-block;
+				width: calc(100%-50px);
+				margin-left: 6px;
+			}
+			
+			.mui-icon {
+				font-size: 15px;
+			}
+			
+			.mui-btn {
+				font-size: 22px;
+				font-weight: bold;
+				color: #18B4ED;
+			}
+			
+			.mui-input-clear {
+				margin-bottom: 8px !important;
+			}
+			
+			.input_i {
+				display: inline-block;
+				width: 35px;
+				height: 30px;
+				float: left;
+				margin: 5px;
+				text-align: center;
+			}
+			
+			.add {
+				position: fixed;
+				bottom: 20px;
+				right: 10px;
+				width: 60px;
+				height: 60px;
+				background-color: #18B4ED;
+				border-style: solid;
+				border-radius: 30px;
+				border-color: #18B4ED;
+				color: #FFFFFF;
+				font-size: 50px;
+				padding: 16px 0px 0px 11px;
+			}
+			
+			.ok {
+				position: fixed;
+				bottom: 20px;
+				left: 10px;
+				width: 60px;
+				height: 60px;
+				background-color: #18B4ED;
+				border-style: solid;
+				border-radius: 30px;
+				border-color: #18B4ED;
+				color: #FFFFFF;
+				font-size: 15px;
+				font-weight: bold;
+				padding: 18px 0px 0px 10px;
+			}
+			
+			.input_box {
+				position: fixed;
+				z-index: 99;
+				width: 300px;
+				height: 400px;
+				border: 1px solid #555555;
+				border-radius: 10px;
+				background-color: #FFFFFF;
+				top: 50%;
+				left: 50%;
+				margin-top: -200px;
+				margin-left: -150px;
+				text-align: center;
+				padding-top: 18px;
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">广理工电话本·广理小助手</h1>
+		</header>
+		<div class="mui-content">
+			<div class="search-box">
+				<div class="mui-input-row mui-search">
+					<input type="search" class="mui-input-clear" style="background-color: #FFFFFF;" placeholder="" oninput="content_change(this)" />
+				</div>
+			</div>
+			<ul id="list" class="mui-table-view" style="margin-bottom: 80px;">
+
+			</ul>
+
+			<div class="ok" onclick="ok()">确定</div>
+			<div class="add" onclick="display_input_box()">+</div>
+
+			<div id="input_box" class="input_box">
+				<img id="shop-img" src="imags/glxzs.png" width="260" height="160" />
+				<img id="shop-QRC" src="imags/xzs.jpg" width="50px" height="50px" style="position: absolute;z-index: 9999999;top: 122px;left: 223px;" />
+				<input id="add-img" type="file" accept="image/*" style="display: none;" />
+				<input id="add-QRC" type="file" accept="image/*" style="display: none;" />
+				<div style="margin-top: 25px;">
+					名称：<input id="add-name" style="width: 200px;" />
+				</div>
+				<div style="margin-top: 20px;">
+					电话：<input id="add-phone" style="width: 200px;" />
+				</div>
+				<div style="margin-top: 20px;">
+					简介：<input id="add-synopsis" style="width: 200px;" />
+				</div>
+				<div style="margin-top: 10px;">
+					<button onclick="document.getElementById('input_box').style.display='none'">取消</button>　　<button onclick="add()">确定</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+
+			refresh_list();
+
+			var img_, qrc_;
+			var up;
+			var up_object;
+
+			var shop_img = document.getElementById("shop-img");
+			var shop_QRC = document.getElementById("shop-QRC");
+			var add_img = document.getElementById("add-img");
+			var add_QRC = document.getElementById("add-QRC");
+			var list_q = document.getElementById("list");
+
+			var by = function(name) {
+				return function(o, p) {
+					var a, b;
+					if(typeof o === "object" && typeof p === "object" && o && p) {
+						a = o[name];
+						b = p[name];
+						if(a === b) {
+							return 0;
+						}
+						if(typeof a === typeof b) {
+							return a < b ? -1 : 1;
+						}
+						return typeof a < typeof b ? -1 : 1;
+					} else {
+						throw("error");
+					}
+				}
+			}
+
+			function content_change(this_) {
+				var value = this_.value;
+				var list = list_q.children;
+
+				for(var i = 0; i < list.length; i++) {
+					if(list[i].innerText.indexOf(value) != -1) {
+						list[i].style.display = "block";
+					} else {
+						list[i].style.display = "none";
+					}
+				}
+			}
+
+			function add() {
+				var add_name = document.getElementById("add-name").value;
+				var add_phone = document.getElementById("add-phone").value;
+				if(add_name.length == 0) {
+					mui.alert("名称有误");
+					return;
+				} else if(add_phone.replace(/^1\d{10}$/, true)) {
+					if(up > 0) {
+						up_phone_number(add_name, add_phone, document.getElementById("add-synopsis").value, img_, qrc_);
+					} else {
+						add_phone_number(add_name, add_phone, document.getElementById("add-synopsis").value, img_, qrc_);
+					}
+
+					document.getElementById('input_box').style.display = 'none';
+				} else {
+					mui.alert("电话有误");
+					return;
+				}
+			}
+
+			function up_phone_number(add_name, add_phone, synopsis, img, qrc) {
+				li = up_object;
+				li.setAttribute("data-synopsis", synopsis);
+				li.setAttribute("data-img", img);
+				li.setAttribute("data-qrc", qrc);
+				li.innerHTML = '<li class="mui-table-view-cell"><input class="input_i" value="99" /><ul class="ul-item"><li class="li-name"></li><li class="li-name">电话：<span class="phone"></span></li></ul><a class="mui-btn" onclick="delete_(this)">—</a></li>';
+				li.getElementsByClassName('input_i')[0].value = "0";
+				li.getElementsByClassName('li-name')[0].innerText = add_name;
+				li.getElementsByClassName('phone')[0].innerText = add_phone;
+			}
+
+			function add_phone_number(add_name, add_phone, synopsis, img, qrc) {
+				var li = document.createElement('li');
+				li.setAttribute("data-synopsis", synopsis);
+				li.setAttribute("data-img", img);
+				li.setAttribute("data-qrc", qrc);
+				li.innerHTML = '<li class="mui-table-view-cell"><input class="input_i" value="99" /><ul class="ul-item"><li class="li-name"></li><li class="li-name">电话：<span class="phone"></span></li></ul><a class="mui-btn">—</a></li>';
+				li.getElementsByClassName('input_i')[0].value = "99";
+				li.getElementsByClassName('input_i')[0].addEventListener("click", function() {
+					stopbubble(arguments[0]);
+				}, true);
+				li.getElementsByClassName('li-name')[0].innerText = add_name;
+				li.getElementsByClassName('phone')[0].innerText = add_phone;
+				li.getElementsByClassName('mui-btn')[0].addEventListener("click", function() {
+					delete_(this);
+					stopbubble(arguments[0]);
+				}, true);
+				li.onclick = function() {
+					display_input_box_2(this);
+
+				}
+				list_q.appendChild(li);
+			}
+
+			function add_phone_number2(priority, add_name, add_phone, synopsis, img, qrc) {
+				var li = document.createElement('li');
+				li.setAttribute("data-synopsis", synopsis);
+				li.setAttribute("data-img", img);
+				li.setAttribute("data-qrc", qrc);
+				li.innerHTML = '<li class="mui-table-view-cell"><input class="input_i" value="99" /><ul class="ul-item"><li class="li-name"></li><li class="li-name">电话：<span class="phone"></span></li></ul><a class="mui-btn">—</a></li>';
+				li.getElementsByClassName('input_i')[0].value = priority;
+				li.getElementsByClassName('input_i')[0].addEventListener("click", function() {
+					stopbubble(arguments[0]);
+				}, true);
+				li.getElementsByClassName('li-name')[0].innerText = add_name;
+				li.getElementsByClassName('phone')[0].innerText = add_phone;
+				li.getElementsByClassName('mui-btn')[0].addEventListener("click", function() {
+					delete_(this);
+					stopbubble(arguments[0]);
+				}, true);
+				li.onclick = function() {
+					display_input_box_2(this);
+
+				}
+				list_q.appendChild(li);
+			}
+
+			function stopbubble(e) { //阻止冒泡
+				e.stopPropagation(); //stop bubble event on this node
+			}
+
+			function delete_(this_) {
+				mui.confirm("提示", "确认删除？", ['确认', '取消'], function(e) {
+					if(e.index == 0) {
+						removeElement(this_.parentNode.parentNode);
+					}
+				});
+			}
+
+			function removeElement(_element) {
+				var _parentElement = _element.parentNode;
+				if(_parentElement) {
+					_parentElement.removeChild(_element);
+				}
+			}
+
+			function ok() {
+				mui.prompt("请输入管理员密码", "密码", "提示", ["确认", "取消"], function(e) {
+					if(e.index == 0) {
+						var list = list_q.children;
+						var array_ = new Array(list.length);
+						console.log(list.length);
+						for(var i = 0; i < list.length; i++) {
+							array_[i] = {
+								'priority': parseInt(list[i].getElementsByClassName('input_i')[0].value),
+								'name': list[i].getElementsByClassName('li-name')[0].innerText,
+								'phone': list[i].getElementsByClassName('phone')[0].innerText,
+								'synopsis': list[i].getAttribute("data-synopsis"),
+								'img': list[i].getAttribute("data-img"),
+								'qrc': list[i].getAttribute("data-qrc")
+							};
+						}
+						console.log(e.value);
+						array_.sort(by("priority"));
+
+						mui.ajax('./add.php', {
+							data: {
+								user_data: JSON.stringify(array_),
+								password: e.value
+							},
+							dataType: 'json', //服务器返回json格式数据
+							type: 'post', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							success: function(data) {
+								if(data.success == 1) {
+									mui.alert("提交成功");
+									refresh_list();
+								} else {
+									mui.alert("提交失败");
+								}
+
+							},
+							error: function(xhr, type, errorThrown) {
+								//异常处理；
+								console.log(type);
+								mui.alert("提交失败");
+							}
+						});
+					}
+				});
+			}
+
+			function refresh_list() {
+				mui.ajax('./data.json', {
+					data: {},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						if(data.length > 0) {
+							list_q.innerHTML = "";
+							for(var i = 0; i < data.length; i++) {
+								add_phone_number2(data[i].priority, data[i].name, data[i].phone, data[i].synopsis, data[i].img, data[i].qrc);
+							}
+						} else {
+							mui.alert("获取数据失败");
+						}
+
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+						mui.alert("获取数据失败");
+					}
+				});
+			}
+
+			shop_img.onclick = function() {
+				mui.confirm("提示", "上传还是删除？[门面]", ['上传', '删除','取消'], function(e) {
+					if(e.index == 0) {
+						add_img.click();
+					}else if(e.index == 1){
+						shop_img.src = "imags/glxzs.png";
+						img_ = "";
+					}
+				});
+			};
+
+			shop_QRC.onclick = function() {
+				mui.confirm("提示", "上传还是删除？[二维码]", ['上传', '删除','取消'], function(e) {
+					if(e.index == 0) {
+						add_QRC.click();
+					}else if(e.index == 1){
+						shop_QRC.src = "imags/xzs.jpg";
+						qrc_ = "";
+					}
+				});
+			};
+
+			add_img.onchange = function() {
+				var file = this.files[0];
+				//判断是否是图片类型
+				if(!/image\/\w+/.test(file.type)) {
+					mui.alert("只能选择图片");
+					return false;
+				}
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e) {
+					img_ = this.result;
+					shop_img.src = this.result;
+					console.log(this.result);
+				}
+
+			};
+
+			add_QRC.onchange = function() {
+				var file = this.files[0];
+				//判断是否是图片类型
+				if(!/image\/\w+/.test(file.type)) {
+					mui.alert("只能选择图片");
+					return false;
+				}
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e) {
+					qrc_ = this.result;
+					shop_QRC.src = this.result;
+					console.log(this.result);
+				}
+			};
+
+			function display_input_box() {
+				up = 0;
+				shop_img.src = "imags/glxzs.png";
+				shop_QRC.src = "imags/xzs.jpg";
+				document.getElementById("add-name").value = "";
+				document.getElementById("add-phone").value = "";
+				document.getElementById("add-synopsis").value = "";
+				img_ = "";
+				qrc_ = "";
+				document.getElementById('input_box').style.display = 'block';
+			}
+
+			function display_input_box_2(this_) {
+				img_ = (!this_.getAttribute("data-img") ? "" : this_.getAttribute("data-img"));
+				shop_img.src = (!this_.getAttribute("data-img") ? "imags/glxzs.png" : this_.getAttribute("data-img"));
+				qrc_ = (!this_.getAttribute("data-qrc") ? "" : this_.getAttribute("data-qrc"));
+				shop_QRC.src = (!this_.getAttribute("data-qrc") ? "imags/xzs.jpg" : this_.getAttribute("data-qrc"));
+				document.getElementById("add-name").value = this_.getElementsByClassName('li-name')[0].innerText;
+				document.getElementById("add-phone").value = this_.getElementsByClassName('phone')[0].innerText;
+				document.getElementById("add-synopsis").value = (!this_.getAttribute("data-synopsis") ? "" : this_.getAttribute("data-synopsis"));
+				up = 1;
+				up_object = this_;
+				document.getElementById('input_box').style.display = 'block';
+			}
+
+			function getNodeIndex(node) {//取元素在父节点的索引
+				var i = 0;
+				while(node = node.previousSibling) {
+					i++;
+				}
+				return i;
+			}
+		</script>
+	</body>
+
+</html>

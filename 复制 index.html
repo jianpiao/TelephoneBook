@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>广理小助手</title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-title {
+				background-color: #18B4ED;
+				color: #FFFFFF;
+				font-size: 2ex;
+			}
+			
+			.mui-bar-nav {
+				background-color: #18B4ED;
+			}
+			
+			.search-box {
+				padding: 8px 10px 0px 10px;
+				background-color: #EBECED;
+			}
+			
+			.li-name {
+				list-style: none;
+			}
+			
+			.ul-item {
+				padding-left: 0px;
+			}
+			
+			.mui-icon {
+				font-size: 15px;
+			}
+			
+			.mui-btn {
+				font-size: 12px;
+				font-weight: 900;
+				border-width: 3px;
+				border-style: outset;
+				border-color: #18B4ED;
+				border-radius: 8px;
+				background-color: #00CCFF;
+				color: #FFFFFF;
+			}
+			
+			.mui-input-clear {
+				margin-bottom: 8px !important;
+			}
+			
+			.mui-content {
+				margin-bottom: 30px;
+			}
+			
+			.foot {
+				position: fixed;
+				width: 100%;
+				height: 30px;
+				bottom: 0px;
+				background-color: #FFFFFF;
+				text-align: center;
+			}
+			.follow {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				height: 230px;
+				width: 200px;
+				margin-top: -115px;
+				margin-left: -100px;
+				border: 1px solid #999999;
+				border-radius: 20px;
+				background-color: #FFFFFF;
+				text-align: center;
+				font-weight: 700;
+				font-size: 13px;
+				color: #323232;
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">广理工电话本·广理小助手</h1>
+		</header>
+		<div class="mui-content">
+			<div class="search-box">
+				<div class="mui-input-row mui-search">
+					<input type="search" class="mui-input-clear" style="background-color: #FFFFFF;" placeholder="" oninput="content_change(this)" />
+				</div>
+			</div>
+			<ul id="list" class="mui-table-view">
+				
+			</ul>
+			<div class="foot" onclick="document.getElementById('follow').style.display='block'">
+				<div style="margin-top: 5px;"><div style="display: inline-block;height: 24px;width: 24px;background:url(imags/logo.png) round left center"></div><div style="display: inline-block;position: relative;color: #202020;font-weight: 700;top: -6px;">关注小助手</div></div>
+			</div>
+			<div id="follow" class="follow">
+				<div style="margin-top: 5px;">长按识别即可关注</div>
+				<img src="imags/xzs.jpg" width="150" height="150" />
+				<button onclick="document.getElementById('follow').style.display='none'">取消</button>
+			</div>
+		</div>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			
+			var list_q = document.getElementById("list");
+			
+			refresh_list();
+
+			function content_change(this_) {
+				var value = this_.value;
+				var list = document.getElementById("list").children;
+
+				for(var i = 0; i < list.length; i++) {
+					if(list[i].innerText.indexOf(value) != -1) {
+						list[i].style.display = "block";
+					} else {
+						list[i].style.display = "none";
+					}
+				}
+			}
+
+			function refresh_list() {
+				mui.ajax('./data.json', {
+					data: {},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						if(data.length > 0) {
+							list_q.innerHTML = "";
+							for(var i = 0; i < data.length; i++) {
+								add_phone_number(data[i].name, data[i].phone);
+							}
+						} else {
+							mui.alert("获取数据失败");
+						}
+
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+						mui.alert("获取数据失败");
+					}
+				});
+			}
+			
+			function add_phone_number(add_name, add_phone) {
+				var li = document.createElement('li');
+				li.innerHTML = '<li class="mui-table-view-cell"><ul class="ul-item"><li class="li-name"></li><li class="li-name">电话：<span class="phone"></span></li></ul><a class="mui-btn" href=""><span class="mui-icon mui-icon-phone"></span></a></li>';
+				li.getElementsByClassName('li-name')[0].innerText = add_name;
+				li.getElementsByClassName('phone')[0].innerText = add_phone.substring(0,3)+"****"+add_phone.substring(7,11);
+				li.getElementsByClassName('mui-btn')[0].href = 'tel:' + add_phone;
+				list_q.appendChild(li);
+			}
+		</script>
+	</body>
+
+</html>

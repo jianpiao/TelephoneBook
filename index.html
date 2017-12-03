@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>广理小助手</title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-title {
+				background-color: #18B4ED;
+				color: #FFFFFF;
+				font-size: 2ex;
+			}
+			
+			.mui-bar-nav {
+				background-color: #18B4ED;
+			}
+			
+			.search-box {
+				padding: 8px 10px 0px 10px;
+				background-color: #EBECED;
+				position: fixed;
+				width: 100%;
+				z-index: 999;
+			}
+
+			.mui-input-row > input{
+				background-color: #FFFFFF;
+			}
+			
+			.mui-table-view {
+				margin-top: 50px;
+			}
+			
+			.li-name {
+				list-style: none;
+			}
+			
+			.ul-item {
+				padding-left: 0px;
+			}
+			
+			.mui-icon {
+				position: absolute;
+				top: 7px;
+				left: 5px;
+				font-size: 20px;
+				color: #6D6D72;
+			}
+			
+			.mui-btn{
+				margin-bottom: 8px;
+			}
+			
+			.mui-btn-success{
+				background-color: rgba(42,188,69,1);
+				border: none;
+			}
+		
+			.mui-input-clear {
+				margin-bottom: 8px !important;
+			}
+			
+			.mui-content {
+				margin-bottom: 30px;
+			}
+			
+			.foot {
+				position: fixed;
+				width: 100%;
+				height: 30px;
+				bottom: 0px;
+				background-color: #FFFFFF;
+				text-align: center;
+			}
+			
+			.follow {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				height: 230px;
+				width: 200px;
+				margin-top: -115px;
+				margin-left: -100px;
+				border: 1px solid #999999;
+				border-radius: 10px;
+				background-color: #FFFFFF;
+				text-align: center;
+				font-weight: 700;
+				font-size: 13px;
+				color: #323232;
+				display: none;
+				z-index: 10000000000;
+				animation: hideCode .2s ease;
+			}
+			
+			@keyframes hideCode {
+				from {
+					opacity: 0;
+					filter: blur(1px);
+				}
+				to {
+					filter: blur(0);
+					opacity: 1;
+				}
+			}
+			
+			.follow_shop {
+				position: fixed;
+				z-index: 9999;
+				top: 58%;
+				left: 50%;
+				width: 300px;
+				height: auto;
+				margin-top: -200px;
+				margin-left: -150px;
+				border: 1px solid #999999;
+				border-radius: 17px;
+				background-color: #FFFFFF;
+				text-align: center;
+				font-weight: 700;
+				font-size: 13px;
+				color: #323232;
+				display: none;
+				box-shadow: 0 0 20px rgba(0, 0, 0, .38);
+				animation: infoWindowShow .5s;
+				filter: contrast(10px);
+			}
+			
+			@keyframes infoWindowShow {
+				from {
+					left: -20%;
+				}
+				to {
+					left: 50%;
+				}
+			}
+			
+			#follow-window {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				background-color: rgba(0, 0, 0, .24);
+				display: none;
+				z-index: 1;
+			}
+			
+			@-moz-keyframes ripple{
+				from{
+					transform: scale(0);
+				}
+				to{
+					transform: scale(2);
+				}
+			}
+			
+			.mui-table-view-cell{
+				border-bottom: 1px solid #eee;
+				border-bottom-width: 4px;
+			}
+
+			.mui-table-view-cell> img,
+			.mui-table-view .mui-media-object{
+				width: 50px !important;
+				height: 50px !important;
+				max-width: 50px !important;
+				max-height: 50px !important;
+				float: left;
+				border-radius: 50%;
+				margin: 8px 0 0 0px;
+			}
+
+			.ul-item{
+				margin: 8px 0 0 60px;
+			}
+
+			.ul-item > li{
+				height: 25px;
+				line-height: 25px;
+			}
+			
+			#follow-phone{
+				color:#444;
+			}
+
+
+			.li-name{
+				font-size: 18px;
+				font-family: "幼圆";
+				color: #222;
+				font-weight: 500;
+			}
+
+			.li-phone{
+				font-size:15px;
+				color: #777;
+			}
+
+			.sim{
+				-webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 7;
+				overflow: hidden;
+				width: 220px;
+				max-height: 210px;
+			}
+
+			.main-info{
+				width: 260px;
+				margin-left: 15px;
+				text-align: left;
+				overflow: hidden;
+			}
+
+			.main-info > samp{
+				color: #6D6D72;
+			}
+
+			.main-info > div{
+				width: 220px;
+			}
+
+			.helper-img{
+				margin-top: 6px;
+				margin-right: 7px;
+				float: right;
+				float: right;
+				font-size: 13px;
+				color: #6D6D72;
+			}
+
+			.foot-contact{
+				width: 150px;
+				margin: 5px auto 0 auto;
+			}
+
+			.foot-contact > span{
+				text-align: center;
+				font-size: 13px;
+				color: #6D6D72;
+			}
+
+			#follow-name{
+				margin-top: 5px;
+				font-size: 17px;
+			}
+
+			#follow-img{
+				margin-top: 10px;
+			}
+
+			#follow-qrc{
+				position: absolute;
+				z-index: 9999999;
+				top: 205px;
+				right: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">广理工电话本·广理小助手</h1>
+		</header>
+		<div class="mui-content">
+			<div class="search-box">
+				<div class="mui-input-row mui-search">
+					<input type="search"  placeholder="搜索" oninput="content_change(this)" />
+				</div>
+			</div>
+			<ul id="list" class="mui-table-view">
+				
+				
+				
+			</ul>
+			<div class="foot">
+				<div onclick="document.getElementById('follow').style.display='block'"  class="helper-img">@小助手</div>
+				<div><span class="mui-icon mui-icon-home"></span></div>
+				<div class="foot-contact">
+					<span>
+						添加或修改V:863290893
+					</span>
+					
+				</div>
+			</div>
+			<div id="follow" class="follow">
+				<div style="margin-top: 5px;">长按识别即可关注</div>
+				<img src="imags/xzs.jpg" width="150" height="150" />
+				<button onclick="document.getElementById('follow').style.display='none'">取消</button>
+			</div>
+
+			<div id="follow-window" onclick="cancel()"></div>
+			<div id="follow_shop" class="follow_shop">
+				<div id="follow-name">aaaaaaa</div>
+				<img id="follow-img" src="imags/xxx.jpg" width="260" height="160"/>
+				<img id="follow-qrc" src="imags/xzs.jpg" width="50px" height="50px" onclick="code()" />
+				<div class="main-info">
+					<div class="sim">
+						<samp>简介：</samp><samp id="follow-synopsis"></samp>
+					</div>
+					<div>电话：<samp id="follow-phone"></samp></div>
+				</div>
+
+				<button onclick="cancel()" class="mui-btn">取消</button>　
+				<button id="dial" class="mui-btn mui-btn-success">拨打</button>
+
+			</div>
+			<script type="text/javascript" charset="utf-8">
+				mui.init();
+
+				var list_q = document.getElementById("list");
+				var Phone;
+
+				refresh_list();
+
+				function content_change(this_) {
+					var value = this_.value;
+					var list = document.getElementById("list").children;
+
+					for(var i = 0; i < list.length; i++) {
+						if(list[i].innerText.indexOf(value) != -1) {
+							list[i].style.display = "block";
+						} else {
+							list[i].style.display = "none";
+						}
+					}
+				}
+
+				function refresh_list() {
+					mui.ajax('data.json', {
+						data: {},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							if(data.length > 0) {
+								list_q.innerHTML = "";
+								for(var i = 0; i < data.length; i++) {
+									add_phone_number(data[i].name, data[i].phone, data[i].synopsis, data[i].img, data[i].qrc);
+								}
+							} else {
+								mui.alert("获取数据失败");
+							}
+
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+							mui.alert("获取数据失败");
+						}
+					});
+				}
+
+				function add_phone_number(add_name, add_phone, synopsis, img, qrc) {
+					var li = document.createElement('li');
+					li.setAttribute("data-synopsis", synopsis);
+					li.setAttribute("data-img", img);
+					li.setAttribute("data-qrc", qrc);
+					li.setAttribute("data-phone", add_phone);
+					li.innerHTML = '<li class="mui-table-view-cell mui-media"><img class="mui-media-object mui-pull-left" src=""  /><ul class="ul-item mui-media-body"><li class="li-name">111</li><li class="li-phone mui-ellipsis">电话：<span class="phone"></span></li></ul><a class="mui-btn mui-btn-success">拨打</a></li>';
+					li.getElementsByClassName('li-name')[0].innerText = add_name;
+					li.getElementsByTagName("img")[0].src = img == "" ? "imags/glxzs1.png" : img;
+					li.getElementsByClassName('phone')[0].innerText = add_phone.substring(0, 3) + "****" + add_phone.substring(7, add_phone.length);
+					li.getElementsByClassName('mui-btn')[0].addEventListener("click", function(e) {
+						window.location.href = 'tel:' + this.parentNode.parentNode.getAttribute("data-phone");
+						stopbubble(arguments[0]);
+					}, true);
+					
+					li.onclick = function() {
+						follow_shop(this);
+					}
+					list_q.appendChild(li);
+				}
+
+				function stopbubble(e) { //阻止冒泡
+					e.stopPropagation(); //stop bubble event on this node
+				}
+
+				// 点击二维码显示窗口二维码
+				function code() {
+					document.getElementById("follow").style.display = "block";
+				}
+
+				function follow_shop(this_) {
+					Phone = this_.getAttribute("data-phone");
+					document.getElementById("follow-name").innerText = this_.getElementsByClassName('li-name')[0].innerText;
+					document.getElementById("follow-phone").innerText = this_.getAttribute("data-phone");
+					document.getElementById("follow-synopsis").innerText = (!this_.getAttribute("data-synopsis") ? "[暂无简介]" : this_.getAttribute("data-synopsis"));
+					document.getElementById("follow-img").src = (!this_.getAttribute("data-img") ? "imags/glxzs.png" : this_.getAttribute("data-img"));
+					document.getElementById("follow-qrc").src = (!this_.getAttribute("data-qrc") ? "imags/xzs.jpg" : this_.getAttribute("data-qrc"));
+					document.getElementById('follow_shop').style.display = 'block';
+					document.getElementById('follow-window').style.display = 'block';
+				}
+
+				document.getElementById("dial").onclick = function() {
+					window.location.href = 'tel:' + Phone;
+				}
+
+				function show() {
+					document.getElementById('follow_shop').style.display = 'block';
+					document.getElementById('follow-window').style.display = 'block';
+				}
+
+				// 取消按钮
+				function cancel() {
+					document.getElementById('follow_shop').style.display = 'none';
+					document.getElementById('follow-window').style.display = 'none';
+				}
+			
+			</script>
+	</body>
+
+</html>
